@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Design tokens — Barbearia Balaska
+   Direção visual: preto premium + dourado. Derivado da logo (caveira P&B)
+   e das fotos de estúdio em fundo cinza.
+   ========================================================================== */
+
+@theme {
+  /* Superfícies */
+  --color-ink: #0a0a0a; /* fundo base */
+  --color-ink-raised: #121212; /* cards, seções alternadas */
+  --color-ink-sunken: #050505; /* footer, faixas escuras */
+  --color-line: #262626; /* bordas */
+  --color-line-strong: #3a3a3a;
+
+  /* Texto */
+  --color-bone: #f5f5f4; /* texto principal */
+  --color-ash: #a3a3a3; /* texto secundário */
+  /* #737373 dava só 4.18:1 sobre o fundo — abaixo do mínimo AA de 4.5:1 */
+  --color-ash-dim: #8a8a8a; /* legendas */
+
+  /* Acento */
+  --color-gold: #d4a24c;
+  --color-gold-bright: #e8be6e;
+  --color-gold-deep: #8a6320;
+
+  /* Tipografia */
+  --font-display: var(--font-bebas), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Motion — personalidade "Premium" (motion-design skill)
+     Uma curva assinatura para ~80% das animações, 3 durações. */
+  --ease-signature: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.3, 0, 1, 1);
+  --duration-quick: 180ms;
+  --duration-standard: 400ms;
+  --duration-slow: 700ms;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* compensa o header fixo ao pular para uma âncora */
+    scroll-padding-top: 5rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    /* evita scroll horizontal em qualquer breakpoint */
+    overflow-x: hidden;
+  }
+
+  /* Foco visível — nunca removido (ui-ux-pro-max, prioridade 1) */
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-gold);
+    color: #0a0a0a;
+  }
+}
+
+@layer utilities {
+  /* Textura sutil de grão — dá vida ao preto chapado sem custo de imagem */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .marquee-track {
+    animation: marquee var(--marquee-duration, 40s) linear infinite;
+  }
+
+  .marquee-track-reverse {
+    animation: marquee var(--marquee-duration, 40s) linear infinite reverse;
+  }
+
+  /* Máscara de fade nas bordas do marquee */
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 12%,
+      black 88%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 12%,
+      black 88%,
+      transparent
+    );
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* -50% porque a lista é duplicada exatamente uma vez */
+    transform: translateX(-50%);
+  }
+}
+
+/* ==========================================================================
+   Acessibilidade: reduced motion — obrigatório (motion-principles)
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .marquee-track,
+  .marquee-track-reverse {
+    animation: none !important;
+  }
+}
