@@ -164,8 +164,8 @@ export const faqs = [
 ];
 
 export const gallery = [
-  { src: "/img/corte-em-acao.png", alt: "Robson finalizando a barba de um cliente na cadeira" },
-  { src: "/img/navalhas.png", alt: "Kit de navalhas e tesouras no avental de couro" },
   { src: "/img/robson-sorriso.png", alt: "Robson Luiz sorrindo segurando a máquina de corte" },
   { src: "/img/robson-sentado.png", alt: "Robson Luiz sentado na cadeira da barbearia" },
+  { src: "/img/navalhas.png", alt: "Kit de navalhas e tesouras no avental de couro" },
+  { src: "/img/corte-em-acao.png", alt: "Robson finalizando a barba de um cliente na cadeira" },
 ];

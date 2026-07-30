@@ -40,8 +40,11 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
-    /* compensa o header fixo ao pular para uma âncora */
+    /* Sem scroll-behavior: smooth — o Lenis assume o scroll suave via JS.
+       Deixar o CSS nativo ligado faria as duas animações brigarem quadro a
+       quadro num clique em âncora. */
+    /* compensa o header fixo ao pular para uma âncora — o Lenis lê este
+       mesmo valor (scroll-padding-top) ao calcular o alvo de scrollTo. */
     scroll-padding-top: 5rem;
     -webkit-tap-highlight-color: transparent;
   }
@@ -86,6 +89,16 @@
     animation: marquee var(--marquee-duration, 40s) linear infinite reverse;
   }
 
+  /* Vinheta circular do vídeo do hero: some antes de chegar em qualquer
+     aresta da caixa (mesmo girada 45°, o ponto mais próximo do centro até
+     uma borda reta fica a 50% do raio) — por isso o fade termina bem antes
+     disso, em 48%. Um círculo girado não revela quina nenhuma, então a
+     rotação nunca cria uma linha reta visível. */
+  .video-vignette {
+    -webkit-mask-image: radial-gradient(circle at center, black 72%, transparent 48%);
+    mask-image: radial-gradient(circle at center, black 72%, transparent 48%);
+  }
+
   /* Máscara de fade nas bordas do marquee */
   .marquee-mask {
     -webkit-mask-image: linear-gradient(
@@ -119,10 +132,6 @@
    Acessibilidade: reduced motion — obrigatório (motion-principles)
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {

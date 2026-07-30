@@ -1,9 +1,18 @@
+"use client";
+
 import Image from "next/image";
 import { Quote } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { useReducedMotion } from "motion/react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { site } from "@/lib/site";
 import { Cta } from "@/components/ui/cta";
 import { InstagramIcon } from "@/components/ui/instagram-icon";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion-primitives";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const stats = [
   { value: "5,0", label: "Nota no Google" },
@@ -12,9 +21,66 @@ const stats = [
 ];
 
 export function About() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  // O vídeo pesa ~4,7MB — só carrega quando o usuário se aproxima da
+  // seção, pra não gastar dados de quem nunca rola até aqui.
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+  const reduced = useReducedMotion();
+
+  useEffect(() => {
+    if (reduced || !sectionRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setShouldLoadVideo(true);
+      },
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, [reduced]);
+
+  // O ScrollTrigger liga o "currentTime" do vídeo direto ao progresso do
+  // scroll pela seção — scrub: 0.6 dá 0,6s de atraso pro vídeo "alcançar"
+  // o scroll, o que poupa o decodificador de buscar um quadro novo a cada
+  // pixel rolado (era isso que travava na versão com Motion).
+  useGSAP(
+    () => {
+      const video = videoRef.current;
+      if (!video || reduced || !shouldLoadVideo) return;
+
+      // Safari no iOS só libera currentTime programático depois de um
+      // play() de verdade — disparamos e pausamos no mesmo instante.
+      video.play().then(() => video.pause()).catch(() => { });
+
+      console.log("========================================");
+      console.log(video.duration);
+      console.log("========================================");
+
+      const start = () => {
+        gsap.to(video, {
+          currentTime: video.duration,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 600px",
+            end: "bottom 800px",
+            scrub: true,
+            // markers: true,
+          },
+        });
+      };
+
+      if (video.readyState >= 1) start();
+      else video.addEventListener("loadedmetadata", start, { once: true });
+    },
+    { scope: sectionRef, dependencies: [shouldLoadVideo, reduced] },
+  );
+
   return (
     <section
       id="barbeiro"
+      ref={sectionRef}
       className="relative border-y border-line bg-ink-sunken py-24 sm:py-32"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -92,7 +158,9 @@ export function About() {
                 className="absolute -inset-3 -z-10 rounded-3xl border border-gold/25 sm:-inset-5"
                 aria-hidden="true"
               />
+
               <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-ink-raised">
+                Foto original — comentada a pedido, o vídeo assumiu o lugar dela.
                 <Image
                   src="/img/robson-perfil.png"
                   alt={`${site.owner}, barbeiro e dono da ${site.name}`}
@@ -100,6 +168,30 @@ export function About() {
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover object-top"
                 />
+
+
+                {/* {shouldLoadVideo ? (
+                  <video
+                    ref={videoRef}
+                    src="/video/scissors-corner.mp4"
+                    poster="/video/scissors-corner-poster.jpg"
+                    muted
+                    playsInline
+                    preload="auto"
+                    className="h-full w-full object-cover"
+                    style={{ mixBlendMode: "screen" }}
+                  />
+                ) : (
+                  <Image
+                    src="/video/scissors-corner-poster.jpg"
+                    alt={`${site.owner}, barbeiro e dono da ${site.name}`}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
+                    style={{ mixBlendMode: "screen" }}
+                  />
+                )} */}
+
                 <div
                   className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink-sunken/90 to-transparent"
                   aria-hidden="true"

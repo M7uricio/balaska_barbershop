@@ -28,8 +28,9 @@ type RevealProps = {
 };
 
 /**
- * Revela o conteúdo quando entra na viewport. Dispara uma única vez —
- * re-animar a cada scroll cansa e distrai.
+ * Revela o conteúdo quando entra na viewport, e desfaz a animação quando
+ * sai — por isso `once: false`. Repete tanto descendo quanto subindo, a
+ * pedido do cliente, em vez de disparar só na primeira renderização.
  */
 export function Reveal({
   children,
@@ -55,7 +56,7 @@ export function Reveal({
       className={className}
       initial={reduced ? { opacity: 0 } : { opacity: 0, ...offset }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
+      viewport={{ once: false, amount: 0.25 }}
       transition={{
         duration: reduced ? DURATION.quick : DURATION.standard,
         ease: EASE_SIGNATURE,
@@ -67,7 +68,8 @@ export function Reveal({
   );
 }
 
-/** Container que escalona a entrada dos filhos. Orçamento total < 500ms. */
+/** Container que escalona a entrada dos filhos. Orçamento total < 500ms.
+ *  Repete também ao sair/reentrar na viewport — mesma regra do Reveal. */
 export const staggerContainer: Variants = {
   hidden: {},
   show: {
@@ -98,7 +100,7 @@ export function Stagger({ children, className, as = "div" }: StaggerProps) {
       variants={staggerContainer}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: false, amount: 0.2 }}
     >
       {children}
     </Tag>
