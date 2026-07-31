@@ -24,6 +24,12 @@ export function Hero() {
     if (!video) return;
     const SCRUB = 0.5;
 
+    // iOS Safari ignora currentTime programático em silêncio até o vídeo
+    // ser "desbloqueado" por um play() real pelo menos uma vez — sem isso,
+    // o scrub simplesmente não faz nada no iPhone, mesmo funcionando no
+    // desktop (onde essa restrição não existe).
+    video.play().then(() => video.pause()).catch(() => { });
+
     const bindVideoScrub = () => {
       gsap.to(video, {
         currentTime: 4,
@@ -35,19 +41,25 @@ export function Hero() {
           scrub: SCRUB,
         },
       });
-      gsap.to(ref, {
-        visibility: "invisible",
-        ease: "none",
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top top",
-          end: "bottom top",
-          // markers: true,
 
-          onLeave: () => ref.current?.classList.add("invisible"),
-          onEnterBack: () => ref.current?.classList.remove("invisible"),
-        }
-      })
+      // Só callbacks, sem tween de propriedade nenhuma — ScrollTrigger.create
+      // é a API certa aqui (gsap.to(ref, {...}) não funciona: ref é o objeto
+      // do React, não o elemento; virava um tween que não anima nada).
+      ScrollTrigger.create({
+        trigger: ref.current,
+        start: "top top",
+        end: "bottom top",
+        onLeave: () => ref.current?.classList.add("invisible"),
+        onEnterBack: () => ref.current?.classList.remove("invisible"),
+      });
+
+      // O site é exportado como estático e hospedado no Render — sem isso,
+      // se o usuário rolar antes do vídeo/fontes terminarem de carregar
+      // (rede mais lenta, comum em 4G), o ScrollTrigger mede a página com
+      // o layout ainda incompleto e o scrub trava em 0 até a próxima
+      // recarga. Um refresh() depois que tudo assentar corrige a medição.
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+      document.fonts?.ready.then(() => ScrollTrigger.refresh());
     };
 
     if (video.readyState >= 1) bindVideoScrub();
