@@ -1,19 +1,24 @@
 "use client";
 
-import { useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { CalendarCheck, MapPin, Star } from "lucide-react";
 import { site } from "@/lib/site";
 import { Cta } from "@/components/ui/cta";
 import { EASE_SIGNATURE, DURATION } from "@/components/motion-primitives";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+
 
 const headline = ["Corte", "que", "impõe", "respeito."];
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const reduced = useReducedMotion();
 
-  // Parallax leve: o conteúdo sobe mais devagar que o scroll ao rolar.
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -21,11 +26,41 @@ export function Hero() {
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
+  useLayoutEffect(() => {
+    gsap.registerPlugin(useGSAP, ScrollTrigger);
+    const video = videoRef.current;
+    if (!video) return;
+    const SCRUB = 0.5;
+
+    const bindVideoScrub = () => {
+      gsap.to(video, {
+        currentTime: 4,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ref.current,
+          start: "top top",
+          end: "bottom 600px",
+          scrub: SCRUB,
+          markers: true,
+        },
+      });
+    };
+
+    if (video.readyState >= 1) bindVideoScrub();
+    else video.addEventListener("loadedmetadata", bindVideoScrub, { once: true });
+
+
+    return () => {
+      video.removeEventListener("loadedmetadata", bindVideoScrub);
+      gsap.killTweensOf(video);
+    }
+  }, [])
+
   return (
     <section
       id="topo"
       ref={ref}
-      className="relative isolate flex min-h-svh items-end overflow-hidden bg-[#020202] pb-16 pt-28 sm:items-center sm:pb-24"
+      className="relative isolate flex min-h-svh items-end overflow-hidden bg-[#010101] pb-16 pt-28 sm:items-center sm:pb-24"
     >
 
       <motion.div
@@ -139,18 +174,17 @@ export function Hero() {
           </div>
 
           <div className="hidden items-center justify-center lg:flex">
-            <div className="video-vignette relative aspect-square h-140 max-h-[55vh] overflow-hidden rotate-45">
+            <div className="video-vignette relative aspect-square h-125 overflow-hidden rotate-45">
               <video
+                ref={videoRef}
                 className="absolute inset-0 h-full w-full scale-100 object-cover"
                 style={{ mixBlendMode: "screen" }}
-                autoPlay
-                loop
                 muted
                 playsInline
                 preload="auto"
                 poster="/video/scissors-corner-poster.jpg"
               >
-                <source src="/video/scissors-corner.mp4" type="video/mp4" />
+                <source src="/video/scissors-corner-scrub.mp4" type="video/mp4" />
               </video>
             </div>
           </div>

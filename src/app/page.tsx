@@ -10,6 +10,7 @@ import { Faq } from "@/components/faq";
 import { FinalCta } from "@/components/final-cta";
 import { SiteFooter } from "@/components/site-footer";
 import { MobileCtaBar } from "@/components/mobile-cta-bar";
+import { HeroTest } from "@/components/hero-test";
 
 export default function Home() {
   return (
@@ -25,6 +26,7 @@ export default function Home() {
 
       <main className="flex-1">
         <Hero />
+        {/* <HeroTest /> */}
         <MarqueeStrip />
         <Services />
         <About />
