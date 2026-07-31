@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { CalendarCheck, MapPin, Star } from "lucide-react";
 import { site } from "@/lib/site";
 import { Cta } from "@/components/ui/cta";
@@ -10,8 +10,6 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-
-
 const headline = ["Corte", "que", "impõe", "respeito."];
 
 export function Hero() {
@@ -19,12 +17,6 @@ export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const reduced = useReducedMotion();
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -41,9 +33,21 @@ export function Hero() {
           start: "top top",
           end: "bottom 600px",
           scrub: SCRUB,
-          markers: true,
         },
       });
+      gsap.to(ref, {
+        visibility: "invisible",
+        ease: "none",
+        scrollTrigger: {
+          trigger: ref.current,
+          start: "top top",
+          end: "bottom top",
+          // markers: true,
+
+          onLeave: () => ref.current?.classList.add("invisible"),
+          onEnterBack: () => ref.current?.classList.remove("invisible"),
+        }
+      })
     };
 
     if (video.readyState >= 1) bindVideoScrub();
@@ -60,18 +64,16 @@ export function Hero() {
     <section
       id="topo"
       ref={ref}
-      className="relative isolate flex min-h-svh items-end overflow-hidden bg-[#010101] pb-16 pt-28 sm:items-center sm:pb-24"
+      className="relative isolate flex min-h-400 items-end overflow-hidden bg-[#010101] pb-16 pt-28 sm:items-center sm:pb-24"
     >
 
       <motion.div
-        className="mx-auto w-full max-w-7xl px-5 sm:px-8"
-        style={reduced ? undefined : { y: contentY, opacity: contentOpacity }}
+        className="fixed top-25 -z-1000 min-w-full"
       >
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div className="grid items-center gap-12 lg:grid-cols-2 w-full mx-auto max-w-7xl px-5 sm:px-8">
 
 
           <div className="max-w-2xl">
-            {/* Prova social acima da dobra — dado real do Google */}
             <motion.a
               href={site.links.maps}
               target="_blank"
@@ -93,8 +95,6 @@ export function Hero() {
             </motion.a>
 
             <h1 className="mt-6 font-display text-[3.25rem] uppercase leading-[0.9] text-bone sm:text-7xl lg:text-8xl">
-              {/* O espaço literal entre as palavras precisa existir no DOM:
-                só margem deixaria o leitor de tela ler tudo emendado. */}
               {headline.map((word, i) => (
                 <span key={word}>
                   <motion.span

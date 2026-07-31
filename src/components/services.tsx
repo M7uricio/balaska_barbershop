@@ -6,7 +6,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/motion-primitives";
 
 export function Services() {
   return (
-    <section id="servicos" className="relative py-24 sm:py-32">
+    <section id="servicos" className="relative py-24 sm:py-32 bg-ink">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading
           eyebrow="Serviços"
@@ -27,11 +27,10 @@ export function Services() {
             <StaggerItem
               as="li"
               key={service.name}
-              className={`group relative flex flex-col rounded-2xl border p-6 transition-colors duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] sm:p-7 ${
-                service.featured
-                  ? "border-gold/50 bg-gradient-to-b from-gold/[0.07] to-transparent"
-                  : "border-line bg-ink-raised hover:border-line-strong"
-              }`}
+              className={`group relative flex flex-col rounded-2xl border p-6 transition-colors duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] sm:p-7 ${service.featured
+                ? "border-gold/50 bg-gradient-to-b from-gold/[0.07] to-transparent"
+                : "border-line bg-ink-raised hover:border-line-strong"
+                }`}
             >
               {service.featured && (
                 <span className="absolute -top-3 left-6 inline-flex items-center gap-1.5 rounded-full bg-gold px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-ink">

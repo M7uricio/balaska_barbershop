@@ -9,10 +9,6 @@ const items = [
   "Diadema · Vila Nogueira",
 ];
 
-/**
- * Faixa infinita entre o hero e os serviços. A lista é duplicada uma vez e a
- * animação desloca -50%, o que faz o loop emendar sem salto.
- */
 export function MarqueeStrip() {
   return (
     <div
