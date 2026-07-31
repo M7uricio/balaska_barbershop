@@ -56,7 +56,7 @@ export function SiteHeader() {
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
           <a
             href="#topo"
-            className="flex items-center gap-3"
+            className="flex items-center gap-2 min-[460px]:gap-3"
             aria-label={`${site.name} — início`}
           >
             <Image
@@ -64,12 +64,15 @@ export function SiteHeader() {
               alt=""
               width={48}
               height={48}
-              className="h-11 w-11 object-contain"
+              className="h-9 w-9 object-contain min-[460px]:h-11 min-[460px]:w-11"
               priority
             />
             <span className="font-display text-xl leading-none sm:text-2xl">
               Balaska
-              <span className="block text-[0.55rem] font-sans font-medium uppercase tracking-[0.28em] text-ash-dim">
+              {/* O subtítulo é a parte mais larga do bloco da logo (rastreio
+                  de letras generoso) — some primeiro pra abrir espaço pro
+                  "Agendar horário" não quebrar linha ao lado do hambúrguer. */}
+              <span className="hidden text-[0.55rem] font-sans font-medium uppercase tracking-[0.28em] text-ash-dim min-[460px]:block">
                 By {site.owner}
               </span>
             </span>
@@ -88,12 +91,15 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-2">
+            {/* Texto sempre visível, nunca quebra linha (whitespace-nowrap).
+                O espaço pra isso caber vem do logo encolhendo ao lado
+                (imagem menor, subtítulo escondido) até 460px. */}
             <Cta
               href={site.links.booking}
               size="md"
-              className="hidden sm:inline-flex"
+              className="!gap-1.5 !px-3 text-xs whitespace-nowrap min-[460px]:!gap-2 min-[460px]:!px-5 min-[460px]:text-sm"
             >
-              <CalendarCheck className="h-4 w-4" aria-hidden="true" />
+              <CalendarCheck className="h-4 w-4 shrink-0" aria-hidden="true" />
               Agendar horário
             </Cta>
 

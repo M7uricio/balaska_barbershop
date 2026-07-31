@@ -47,13 +47,18 @@
        mesmo valor (scroll-padding-top) ao calcular o alvo de scrollTo. */
     scroll-padding-top: 5rem;
     -webkit-tap-highlight-color: transparent;
+    /* overflow-x no body sozinho não contém elementos fixed (header, barra
+       fixa do mobile, o wrapper fixed do hero): com inset-0/inset-x-0, eles
+       resolvem a largura contra o viewport COM a faixa da scrollbar, ficando
+       ~16px mais largos que a área realmente visível — isso é o que criava
+       o scroll horizontal fantasma. Precisa estar aqui, no html. */
+    overflow-x: hidden;
   }
 
   body {
     background-color: var(--color-ink);
     color: var(--color-bone);
     font-family: var(--font-sans);
-    /* evita scroll horizontal em qualquer breakpoint */
     overflow-x: hidden;
   }
 

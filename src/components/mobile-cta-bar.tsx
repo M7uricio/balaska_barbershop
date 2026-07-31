@@ -9,15 +9,26 @@ import { EASE_SIGNATURE, DURATION } from "@/components/motion-primitives";
 /**
  * Barra fixa de conversão no mobile. Só aparece depois que o usuário passa do
  * hero — antes disso o CTA do hero já está visível e a barra seria redundante.
+ *
+ * Usa IntersectionObserver no próprio hero (#topo) em vez de um limiar fixo
+ * de scrollY: o hero tem ~1600px (é o trilho do vídeo com scroll), bem mais
+ * que um viewport — um limiar tipo "80% da tela" faria a barra tentar
+ * aparecer bem no meio do hero ainda, brigando com o conteúdo por cima.
+ * Observando o hero direto, a barra só entra quando ele realmente some da
+ * tela, não importa a altura.
  */
 export function MobileCtaBar() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.85);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const hero = document.getElementById("topo");
+    if (!hero) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(!entry.isIntersecting),
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
   }, []);
 
   return (

@@ -66,13 +66,26 @@ export function Hero() {
       ref={ref}
       className="relative isolate flex min-h-400 items-end overflow-hidden bg-[#010101] pb-16 pt-28 sm:items-center sm:pb-24"
     >
+      {/* top-28 (112px) até lg: reserva os 80px do header fixo + respiro —
+          sem isso o conteúdo centraliza pela altura TOTAL da viewport e,
+          com menos espaço sobrando numa tela pequena, fica colado embaixo
+          do header. No lg: volta pro viewport inteiro (já validado ali). */}
+      {/* items-start até lg: o conteúdo empilhado (gancho+vídeo+ação) pode
+          ficar mais alto que a caixa disponível em telas baixas — como é
+          fixed, centralizar nesse caso estoura os dois lados por igual,
+          empurrando o selo/título (topo, o mais importante) pra cima, perto
+          do header. Alinhado no topo, o início fica sempre previsível logo
+          abaixo do header, e se algo estourar é o endereço (fim do bloco de
+          ação), não o começo. No lg: volta a centralizar (já validado). */}
       <motion.div
-        className="fixed inset-0 -z-1000 flex min-w-full items-center"
+        className="fixed inset-x-0 top-28 bottom-0 -z-1000 flex min-w-full items-start lg:items-center lg:top-0"
       >
         <div className="grid items-center gap-12 lg:grid-cols-2 w-full mx-auto max-w-7xl px-5 sm:px-8">
 
-
-          <div className="max-w-2xl">
+          {/* Gancho: selo + título + descrição. Sempre primeiro — em
+              telas médias/pequenas o vídeo entra logo depois deste bloco;
+              no desktop (lg:) volta pra coluna 1, linha 1. */}
+          <div className="max-w-2xl lg:col-start-1 lg:row-start-1">
             <motion.a
               href={site.links.maps}
               target="_blank"
@@ -131,9 +144,37 @@ export function Hero() {
               {site.address.city}. Você marca a hora, senta na cadeira e sai pronto
               para a semana.
             </motion.p>
+          </div>
 
+          {/* Vídeo: em telas médias/pequenas fica entre o gancho e o bloco
+              de ação (ordem natural do grid de 1 coluna). No desktop (lg:)
+              volta pra coluna 2, ocupando as duas linhas — ao lado dos dois
+              blocos de texto, como já estava antes. */}
+          <div className="flex items-center justify-center lg:col-start-2 lg:row-start-1 lg:row-span-2">
+            {/* Passos de tamanho por breakpoint — o quadrado rotacionado
+                45° tem bounding box ~1,41x o lado, então precisa encolher
+                bastante no mobile pra não flertar com a borda da tela. */}
+            <div className="video-vignette relative aspect-square h-48 overflow-hidden rotate-45 sm:h-64 md:h-80 lg:h-125">
+              <video
+                ref={videoRef}
+                className="absolute inset-0 h-full w-full scale-100 object-cover"
+                style={{ mixBlendMode: "screen" }}
+                muted
+                playsInline
+                preload="auto"
+                poster="/video/scissors-corner-poster.jpg"
+              >
+                <source src="/video/scissors-corner-scrub.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+
+          {/* Ação: CTAs + endereço. Sempre por último. mt-9 saiu daqui —
+              agora é o gap-12 do grid que separa este bloco do gancho,
+              tanto empilhado (mobile/tablet) quanto na linha 2 (lg:). */}
+          <div className="max-w-2xl lg:col-start-1 lg:row-start-2">
             <motion.div
-              className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
+              className="flex flex-col gap-3 sm:flex-row sm:items-center"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
@@ -171,23 +212,8 @@ export function Hero() {
               {site.address.street} · {site.address.district}, {site.address.city}
             </motion.p>
           </div>
-
-          <div className="hidden items-center justify-center lg:flex">
-            <div className="video-vignette relative aspect-square h-125 overflow-hidden rotate-45">
-              <video
-                ref={videoRef}
-                className="absolute inset-0 h-full w-full scale-100 object-cover"
-                style={{ mixBlendMode: "screen" }}
-                muted
-                playsInline
-                preload="auto"
-                poster="/video/scissors-corner-poster.jpg"
-              >
-                <source src="/video/scissors-corner-scrub.mp4" type="video/mp4" />
-              </video>
-            </div>
-          </div>
         </div>
+
       </motion.div>
 
     </section>

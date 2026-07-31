@@ -54,6 +54,7 @@ export function Cta({
         target="_blank"
         rel="noopener noreferrer"
         className={classes}
+        {...rest}
       >
         {children}
       </a>
