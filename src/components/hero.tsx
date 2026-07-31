@@ -66,9 +66,8 @@ export function Hero() {
       ref={ref}
       className="relative isolate flex min-h-400 items-end overflow-hidden bg-[#010101] pb-16 pt-28 sm:items-center sm:pb-24"
     >
-
       <motion.div
-        className="fixed top-25 -z-1000 min-w-full"
+        className="fixed inset-0 -z-1000 flex min-w-full items-center"
       >
         <div className="grid items-center gap-12 lg:grid-cols-2 w-full mx-auto max-w-7xl px-5 sm:px-8">
 
