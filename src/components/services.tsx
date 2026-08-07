@@ -1,5 +1,5 @@
-import { CalendarCheck, Clock, Sparkles } from "lucide-react";
-import { services, site } from "@/lib/site";
+import { CalendarCheck, Check, Clock, Crown, Sparkles } from "lucide-react";
+import { clubDescription, clubPlans, services, site } from "@/lib/site";
 import { Cta } from "@/components/ui/cta";
 import { SectionHeading } from "@/components/section-heading";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion-primitives";
@@ -59,6 +59,69 @@ export function Services() {
             </StaggerItem>
           ))}
         </Stagger>
+
+        {/* Clube Balaska: assinatura mensal, dados reais do material de
+            divulgação do cliente. Dentro de Serviços a pedido dele — é
+            outra forma de fechar (assinar em vez de pagar por visita). */}
+        <Reveal className="mt-20 rounded-3xl border border-gold/25 bg-gradient-to-b from-gold/[0.06] to-transparent p-6 sm:p-10">
+          <div className="flex flex-col items-center text-center">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-gold">
+              <Crown className="h-4 w-4" aria-hidden="true" />
+              Clube Balaska
+            </span>
+            <h3 className="mt-4 max-w-xl font-display text-3xl uppercase leading-[0.95] text-bone sm:text-4xl">
+              Corte ilimitado, todo mês, por um preço fixo.
+            </h3>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-ash sm:text-base">
+              {clubDescription}
+            </p>
+          </div>
+
+          <Stagger as="ul" className="mt-10 grid gap-4 sm:grid-cols-3">
+            {clubPlans.map((plan, i) => (
+              <StaggerItem
+                as="li"
+                key={i}
+                className={`relative flex flex-col items-center rounded-2xl border p-6 text-center transition-colors duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                  plan.featured
+                    ? "border-gold bg-ink-raised sm:-my-2 sm:py-8"
+                    : "border-line bg-ink-raised hover:border-line-strong"
+                }`}
+              >
+                {plan.badge && (
+                  <span className="absolute -top-3 inline-flex items-center gap-1.5 rounded-full bg-gold px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-ink">
+                    <Sparkles className="h-3 w-3" aria-hidden="true" />
+                    {plan.badge}
+                  </span>
+                )}
+
+                <p className="text-xs font-semibold uppercase tracking-wider text-gold">
+                  {plan.name}
+                </p>
+                <p className="mt-1 text-sm text-ash">{plan.frequency}</p>
+
+                <p className="mt-4 font-display text-4xl text-bone sm:text-5xl">
+                  R$ {plan.price}
+                  <span className="font-sans text-sm font-medium normal-case text-ash-dim">
+                    /mês
+                  </span>
+                </p>
+
+                <p className="mt-4 flex items-center gap-2 border-t border-line pt-4 text-sm text-ash">
+                  <Check className="h-4 w-4 shrink-0 text-gold" aria-hidden="true" />
+                  {plan.includes}
+                </p>
+              </StaggerItem>
+            ))}
+          </Stagger>
+
+          <div className="mt-8 flex justify-center">
+            <Cta href={site.links.clubWhatsapp} size="lg">
+              <Crown className="h-5 w-5" aria-hidden="true" />
+              Quero fazer parte do clube
+            </Cta>
+          </div>
+        </Reveal>
 
         <Reveal className="mt-12 flex flex-col items-center gap-4 rounded-2xl border border-line bg-ink-raised p-8 text-center sm:flex-row sm:justify-between sm:text-left">
           <div>

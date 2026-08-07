@@ -39,6 +39,9 @@ export const site = {
     whatsapp:
       "https://wa.me/5511969707521?text=" +
       encodeURIComponent("Olá! Vim pelo site e quero agendar um horário."),
+    clubWhatsapp:
+      "https://wa.me/5511969707521?text=" +
+      encodeURIComponent("Olá! Vim pelo site e quero saber mais sobre o Clube Balaska."),
   },
 } as const;
 
@@ -93,6 +96,42 @@ export const services: Service[] = [
     duration: "15 min",
   },
 ];
+
+export type ClubPlan = {
+  name: string;
+  frequency: string;
+  price: string;
+  includes: string;
+  badge?: string;
+  featured?: boolean;
+};
+
+// Dados reais do material de divulgação do Clube Balaska (assinatura mensal).
+export const clubPlans: ClubPlan[] = [
+  {
+    name: "Ilimitado",
+    frequency: "Corte de segunda a quarta",
+    price: "69,90",
+    includes: "Cabelo ou barba",
+  },
+  {
+    name: "Ilimitado",
+    frequency: "Corte de segunda a quarta",
+    price: "129,90",
+    includes: "Cabelo e barba",
+    badge: "TOP",
+    featured: true,
+  },
+  {
+    name: "Ilimitado",
+    frequency: "Corte de segunda a sábado",
+    price: "109,90",
+    includes: "Cabelo ou barba",
+  },
+];
+
+export const clubDescription =
+  "Assinatura com valor fixo mensal no cartão de crédito: cortes ilimitados, sem fidelidade e sem taxa extra.";
 
 // TODO(cliente): confirmar horários. O Google informa apenas "abre qui. às 09:30".
 export const hours = [
